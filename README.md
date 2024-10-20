@@ -1,11 +1,19 @@
 # gitops-minicamp-2024
 More Than Certified GitOps Mini Camp
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
+  - [Key Differences](#key-differences)
+- [GitHub Actions Documentation](#github-actions-documentation)
+- [GitHub Codespace setup Terraform installation](#github-codespace-setup-terraform-install)
+
+
 
 # Introduction
 I am utilising GitHub Actions to automate the deployment of features into my AWS environment. By leveraging continuous integration and deployment (CI/CD) pipelines, I ensure that my code is tested, built, and deployed efficiently and consistently. Additionally, I implement semantic versioning to manage and track software changes, allowing for clear version updates that follow a predictable and standardised format. This approach ensures that each new feature, bug fix, or breaking change is systematically reflected in the versioning. This automation and versioning strategy simplifies my development process, allowing me to focus on delivering high-quality features with minimal manual intervention whilst maintaining full control over the release cycle.
 
-You can find detailed information on semantic versioning from the official documentation at Semantic Versioning​, often abbreviated as SemVer, is a versioning system designed to clearly communicate the nature of changes in a software release.
+You can find detailed information on semantic versioning from the official documentation at [Semantic Versioning](https://semver.org/)​, often abbreviated as SemVer, is a versioning system designed to clearly communicate the nature of changes in a software release.
 
 In essence:
 
@@ -14,8 +22,6 @@ In essence:
 - Patch version (Z) increases when backward-compatible bug fixes are made.
 
 For example, a version number like 1.2.3 means it's the first major version, with two sets of new features (minor updates) and three sets of bug fixes (patch updates) since version 1.0.0​
-
-[Semantic Versioning](https://semver.org/)
 
 ### Similarities between GitHub Actions and Jenkins:
 CI/CD Automation: Both GitHub Actions and Jenkins are widely used for automating Continuous Integration and Continuous Deployment (CI/CD) workflows. They help ensure that code is automatically tested, built, and deployed.
@@ -56,8 +62,8 @@ GitHub also offers interactive tutorials on how to use GitHub Actions, allowing 
 How to set up GitHub Actions specifically for your project. Here’s an example of a simple workflow definition
 file name = .github/workflows/ci.yml
 
-name: CI Pipeline
 ```yml
+name: CI Pipeline
 on:
   push:
     branches:
@@ -88,7 +94,7 @@ jobs:
 **Official Jenkins Documentation:**
 [Jenkins Documentation](https://www.jenkins.io/doc/)
 
-## Setting up the GitHub Codespace 
+## GitHub Codespace setup Terraform installation
 
 To install Terraform in GitHub Codespaces, which runs on Linux ubuntu by default, you'll need to follow the Linux-specific installation instructions.
 
