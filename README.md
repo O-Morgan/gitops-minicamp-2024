@@ -9,9 +9,10 @@ You can find detailed information on semantic versioning from the official docum
 
 In essence:
 
-Major version (X) changes introduce incompatible changes to the API.
-Minor version (Y) increments when new, backward-compatible features are added.
-Patch version (Z) increases when backward-compatible bug fixes are made.
+- Major version (X) changes introduce incompatible changes to the API.
+- Minor version (Y) increments when new, backward-compatible features are added.
+- Patch version (Z) increases when backward-compatible bug fixes are made.
+
 For example, a version number like 1.2.3 means it's the first major version, with two sets of new features (minor updates) and three sets of bug fixes (patch updates) since version 1.0.0​
 
 [Semantic Versioning](https://semver.org/)
@@ -129,45 +130,16 @@ sudo apt-get install terraform
 
 8. Veryify installed by running. 
 ```bash
- terraform -help 
+ terraform -version 
 ```
-**The return should look something like this.**
-
-The available commands for execution are listed below.
-The primary workflow commands are given first, followed by
-less common or more advanced commands.
-
-Main commands:
-  init          Prepare your working directory for other commands
-  validate      Check whether the configuration is valid
-  plan          Show changes required by the current configuration
-  apply         Create or update infrastructure
-  destroy       Destroy previously-created infrastructure
-
-All other commands:
-  console       Try Terraform expressions at an interactive command prompt
-  fmt           Reformat your configuration in the standard style
-  force-unlock  Release a stuck lock on the current workspace
-  get           Install or upgrade remote Terraform modules
-  graph         Generate a Graphviz graph of the steps in an operation
-  import        Associate existing infrastructure with a Terraform resource
-  login         Obtain and save credentials for a remote host
-  logout        Remove locally-stored credentials for a remote host
-  metadata      Metadata related commands
-  output        Show output values from your root module
-  providers     Show the providers required for this configuration
-  refresh       Update the state to match remote systems
-  show          Show the current state or a saved plan
-  state         Advanced state management
-  taint         Mark a resource instance as not fully functional
-  test          Execute integration tests for Terraform modules
-  untaint       Remove the 'tainted' state from a resource instance
-  version       Show the current Terraform version
-  workspace     Workspace management
+**The return should look something like this:**
+Terraform v1.9.8
+on linux_amd64
 
 ### Git is installed in Codespace by default, but you can check by running 
 
 ```bash 
 git --version 
 ```
-The return should be something like **git version 2.46.2**
+**The return should be something like this:** 
+git version 2.46.2
