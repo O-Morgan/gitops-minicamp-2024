@@ -154,7 +154,7 @@ git version 2.46.2
 
 # Configuring the OIDC (OpenID Connect)
 
-An OIDC (OpenID Connect) provider allows AWS to establish a trust relationship with GitHub for roles to assume permissions via OIDC. You can have only one OIDC provider per AWS account for a specific URL (e.g., https://token.actions.githubusercontent.com), but you can associate multiple roles with that provider. If you do not delete an existing OIDC provider, deploying a new stack with the same provider can result in a conflict error.You can only have one OIDC providers within your account, so if you try to launch multiple it will throw you an error. However, you can use multiple roles and just not multiple OIDC Providers. 
+An OIDC (OpenID Connect) provider allows AWS to establish a trust relationship with GitHub for roles to assume permissions via OIDC. You can have only one OIDC provider per AWS account for a specific URL (e.g., https://token.actions.githubusercontent.com), but you can associate multiple roles with that provider. If you do not delete an existing OIDC provider, deploying a new stack with the same provider can result in a conflict error.
 
 
 
@@ -186,4 +186,4 @@ Add any required parameters and capabilities.
 - Create from infrastructure composer 
 - Then chose template and paste in all code text
 
-For more details, visit [AWS documentation]https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy.html
+For more details, visit [AWS documentation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy.html)
