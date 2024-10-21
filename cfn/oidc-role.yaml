@@ -29,7 +29,7 @@ Resources:
               StringEquals:
                 'token.actions.githubusercontent.com:aud': sts.amazonaws.com
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/PowerUserAccess'
+        - 'arn:aws:iam::182399680009:policy/gitops-minicamp-2024' # Make sure this is the policy Arn and not the Role Arn.
 Outputs:
   RoleName:
     Description: 'The name of the IAM role for GitHub Actions'
