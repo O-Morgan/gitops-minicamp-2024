@@ -162,7 +162,7 @@ For more details,[AWS OIDC Documentation] https://docs.aws.amazon.com/IAM/latest
 
 ```yaml
  ManagedPolicyArns:
-        - 'arn:aws:iam::182399680009:policy/gitops-minicamp-2024' # Make sure this is the policy Arn and not the Role Arn.
+        - 'arn:aws:iam::177469626005:policy/gitops-minicamp-2024' # Make sure this is the policy Arn and not the Role Arn.
 ```
 ### Cli Cloud Formation Deployment
 
