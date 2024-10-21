@@ -7,6 +7,8 @@ More Than Certified GitOps Mini Camp
   - [Key Differences](#key-differences)
 - [GitHub Actions Documentation](#github-actions-documentation)
 - [GitHub Codespace setup Terraform installation](#github-codespace-setup-terraform-install)
+- [Configuring the OIDC (OpenID Connect)](#configuring-the-oidc-openid-connect)
+
 
 
 
@@ -149,3 +151,39 @@ git --version
 ```
 **The return should be something like this:** 
 git version 2.46.2
+
+# Configuring the OIDC (OpenID Connect)
+
+An OIDC (OpenID Connect) provider allows AWS to establish a trust relationship with GitHub for roles to assume permissions via OIDC. You can have only one OIDC provider per AWS account for a specific URL (e.g., https://token.actions.githubusercontent.com), but you can associate multiple roles with that provider. If you do not delete an existing OIDC provider, deploying a new stack with the same provider can result in a conflict error.You can only have one OIDC providers within your account, so if you try to launch multiple it will throw you an error. However, you can use multiple roles and just not multiple OIDC Providers. 
+
+
+
+For more details,[AWS OIDC Documentation] https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html.
+
+```yaml
+ ManagedPolicyArns:
+        - 'arn:aws:iam::182399680009:policy/gitops-minicamp-2024' # Make sure this is the policy Arn and not the Role Arn.
+```
+### Cli Cloud Formation Deployment
+
+You can deploy the stack via the cli, but I am going to do it manually via the console. 
+
+```bash
+aws cloudformation deploy \
+  --template-file <your-template-file.yaml> \
+  --stack-name <your-stack-name> \
+  --parameter-overrides Key1=Value1 Key2=Value2 \
+  --capabilities CAPABILITY_NAMED_IAM
+  ```
+Replace <your-template-file.yaml> with the path to your CloudFormation template.
+Replace <your-stack-name> with a name for your stack.
+Add any required parameters and capabilities.
+
+### Manual deployment
+
+- Navigate to Cloud Formation, 
+- Build from infrastructure composer 
+- Create from infrastructure composer 
+- Then chose template and paste in all code text
+
+For more details, visit [AWS documentation]https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy.html
