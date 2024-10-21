@@ -1,9 +1,9 @@
 terraform {
   required_version = "~> 1.9.5"
   backend "s3" {
-    bucket         = "gitops-tf-backend"
+    bucket         = "1234-gitops-backend-2024-1234"
     key            = "terraform.tfstate"
-    region         = "us-east-1"
+    region         = "eu-west-2"
     dynamodb_table = "GitopsTerraformLocks"
   }
 }
