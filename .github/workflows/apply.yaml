@@ -1,16 +1,17 @@
 name: 'Terraform Apply'
 
 on:
-  pull_request:
-    branches:
-      - '**'  # Runs when a pull request is created
+  workflow_run:
+    workflows: ['Terraform Plan']
+    types:
+      - completed
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  terraform:
+  terraform_apply:
     name: 'Terraform Apply'
     runs-on: ubuntu-latest
     environment: development
@@ -31,11 +32,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
-        run: terraform init
-
       - name: Terraform Apply
-        run: terraform apply -input=false -auto-approve
+        run: terraform apply tfplan -input=false -auto-approve
