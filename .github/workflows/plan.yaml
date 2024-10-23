@@ -1,8 +1,6 @@
 name: 'Terraform Plan'
 
 on:
-  issues:
-    types: [opened]
   pull_request:
     branches:
       - '**'
@@ -40,10 +38,4 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan -input=false
-
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: tfplan  # This is the saved Terraform plan file
+        run: terraform plan -input=false

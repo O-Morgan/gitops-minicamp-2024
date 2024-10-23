@@ -3,16 +3,16 @@ name: 'Terraform Destroy'
 on:
   pull_request:
     types:
-      - closed  # Runs when a pull request is closed (merged)
+      - closed  # Trigger when a pull request is closed (merged)
     branches:
-      - main  # Only run when a PR is merged into main
+      - main    # Only trigger if the PR is merged into main
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  terraform:
+  terraform_destroy:
     name: 'Terraform Destroy'
     runs-on: ubuntu-latest
     environment: development
