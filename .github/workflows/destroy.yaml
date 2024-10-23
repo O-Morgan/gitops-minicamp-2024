@@ -1,15 +1,15 @@
-name: 'Terraform Apply'
+name: 'Terraform Destroy'
 
 on: 
-  workflow_dispatch
-  
+  workflow_dispatch  # Allows the workflow to be triggered manually
+
 permissions:
   contents: read
   id-token: write
 
 jobs:
   terraform:
-    name: 'Terraform Apply'
+    name: 'Terraform Destroy'
     runs-on: ubuntu-latest
     environment: development
 
@@ -32,12 +32,12 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init  # Fixed spacing and indentation
+      - name: Terraform Init  # Initialize Terraform
         run: terraform init
 
-      - name: Terraform Plan  # Fixed spacing and indentation
-        run: terraform plan -input=false
+      - name: Terraform Plan (for destroy)  # Plan the destruction
+        run: terraform plan -destroy -input=false
 
-      - name: Terraform Apply
+      - name: Terraform Destroy  # Execute the destruction
         if: github.ref == 'refs/heads/main'
-        run: terraform apply -input=false -auto-approve
+        run: terraform destroy -input=false -auto-approve

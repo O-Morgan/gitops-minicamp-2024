@@ -1,0 +1,16 @@
+name: 'Drift Detection'
+
+on:
+  schedule:
+    - cron: '*/45 * * * *'  # Runs every 45 minutes
+
+jobs:
+  detect_drift:
+    uses: ./.github/workflows/plan.yml  # Reusable workflow
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
