@@ -1,7 +1,11 @@
 name: 'Terraform Destroy'
 
-on: 
-  workflow_dispatch  # Allows the workflow to be triggered manually
+on:
+  pull_request:
+    types:
+      - closed  # Runs when a pull request is closed (merged)
+    branches:
+      - main  # Only run when a PR is merged into main
 
 permissions:
   contents: read
@@ -16,7 +20,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./terraform  # Assuming your Terraform files are in this directory
+        working-directory: ./terraform
 
     steps:
       - name: Checkout the repository
@@ -25,19 +29,18 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: eu-west-2
+          aws-region: "eu-west-2"
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init  # Initialize Terraform
+      - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Plan (for destroy)  # Plan the destruction
+      - name: Terraform Plan (Destroy)
         run: terraform plan -destroy -input=false
 
-      - name: Terraform Destroy  # Execute the destruction
-        if: github.ref == 'refs/heads/main'
+      - name: Terraform Destroy
         run: terraform destroy -input=false -auto-approve

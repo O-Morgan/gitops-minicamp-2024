@@ -6,11 +6,7 @@ on:
 
 jobs:
   detect_drift:
-    uses: ./.github/workflows/plan.yml  # Reusable workflow
-    permissions:
-      contents: read
-      id-token: write
-      pull-requests: write
+    uses: ./.github/workflows/plan.yml  # Reusable workflow reference
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
