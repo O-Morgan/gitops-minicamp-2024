@@ -1,4 +1,4 @@
-package infracost # You must specify infracost as the Rego package name
+package infracost # You must specify infracost as the Rego package name 1
 
 deny[out] {
   maxDiff = 10.0
