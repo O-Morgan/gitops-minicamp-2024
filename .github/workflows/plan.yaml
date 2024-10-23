@@ -8,14 +8,22 @@ on:
     branches:
       - main
 
+permissions:
+    contents: read
+    id-token: write
+    pull-requests: write
+
 jobs:
   terraform:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
-
+    
     defaults:
       run:
+        shell: bash
         working-directory: ./terraform  # Default directory for all steps
+    env:
+        GH_TOKEN: ${{ github.token }}
 
     steps:
       - name: Checkout the repository

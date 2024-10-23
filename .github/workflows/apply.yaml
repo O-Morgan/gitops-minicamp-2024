@@ -1,12 +1,11 @@
 name: 'Terraform Apply'
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: 
+  workflow_dispatch
+  
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   terraform:
@@ -15,6 +14,7 @@ jobs:
 
     defaults:
       run:
+        shell: bash
         working-directory: ./terraform  # Assuming your Terraform files are in this directory
 
     steps:
@@ -31,10 +31,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
+      - name: Terraform Init  # Fixed spacing and indentation
         run: terraform init
 
-      - name: Terraform Plan
+      - name: Terraform Plan  # Fixed spacing and indentation
         run: terraform plan -input=false
 
       - name: Terraform Apply
