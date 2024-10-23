@@ -11,7 +11,7 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["182399680009"] # Canonical
+  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_vpc" "gitops_vpc" {
