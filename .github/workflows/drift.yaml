@@ -1,18 +1,50 @@
-name: 'Drift Detection'
+name: Scheduled Terraform Drift Detection
 
 on:
   schedule:
     - cron: '*/45 * * * *'  # Runs every 45 minutes
 
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+
 jobs:
-  detect_drift:
+  drift-detection:
+    name: Check Drift
+
     runs-on: ubuntu-latest
+    environment: development
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Run reusable workflow
-        uses: ./.github/workflows/plan.yml  # Reusable workflow reference
-        secrets:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: 'eu-west-2'  # AWS region
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+         
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Run drift detection
+        id: drift
+        run: |
+          terramate run \
+          --sync-drift-status \
+          --terraform-plan-file=drift.tfplan \
+          --continue-on-error \
+          --parallel 5 \
+          -- \
+          terraform plan -out drift.tfplan -detailed-exitcode -lock=false
