@@ -1,50 +1,35 @@
-name: Scheduled Terraform Drift Detection
+name: Drift Detection
 
 on:
   schedule:
     - cron: '*/45 * * * *'  # Runs every 45 minutes
 
-permissions:
-  contents: read
-  pull-requests: read
-  checks: read
-
 jobs:
-  drift-detection:
-    name: Check Drift
-
+  build:
     runs-on: ubuntu-latest
-    environment: development
-
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./terraform
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-region: 'eu-west-2'  # AWS region
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Initialize Terraform
+        id: init
+        run: terraform init -no-color -input=false -lock=false
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-         
-      - name: Terraform Init
-        run: terraform init
+      - name: Validate Terraform
+        id: validate
+        run: terraform validate -no-color
 
-      - name: Run drift detection
-        id: drift
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -lock=false -detailed-exitcode -compact-warnings
+        continue-on-error: true
+
+      - name: Output Terraform Plan Summary
         run: |
-          terramate run \
-          --sync-drift-status \
-          --terraform-plan-file=drift.tfplan \
-          --continue-on-error \
-          --parallel 5 \
-          -- \
-          terraform plan -out drift.tfplan -detailed-exitcode -lock=false
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+          ### 🤖 Terraform plan
+          ```terraform
+          ${{ steps.plan.outputs.stdout }}
+          ```
+          EOF
