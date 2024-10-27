@@ -1,4 +1,4 @@
-name: run infracost
+name: Run Infracost
 
 on:
   pull_request:
