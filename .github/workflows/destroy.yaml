@@ -1,11 +1,6 @@
 name: 'Terraform Destroy'
 
-on:
-  pull_request:
-    types:
-      - closed  # Trigger when a pull request is closed (merged)
-    branches:
-      - main    # Only trigger if the PR is merged into main
+on: workflow_dispatch
 
 permissions:
   contents: read
