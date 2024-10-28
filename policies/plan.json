@@ -1,0 +1,103 @@
+{
+    "format_version": "1.2",
+    "terraform_version": "1.9.8",
+    "resource_changes": [
+        {
+            "address": "data.http.test",
+            "mode": "data",
+            "type": "http",
+            "name": "test",
+            "provider_name": "registry.terraform.io/hashicorp/http",
+            "change": {
+                "actions": [
+                    "read"
+                ],
+                "before": null,
+                "after": {
+                    "ca_cert_pem": null,
+                    "insecure": null,
+                    "method": null,
+                    "request_body": null,
+                    "request_headers": null,
+                    "request_timeout_ms": null,
+                    "retry": {
+                        "attempts": 5,
+                        "max_delay_ms": null,
+                        "min_delay_ms": null
+                    }
+                },
+                "after_unknown": {
+                    "body": true,
+                    "id": true,
+                    "response_body": true,
+                    "response_body_base64": true,
+                    "response_headers": true,
+                    "retry": {},
+                    "status_code": true,
+                    "url": true
+                },
+                "before_sensitive": false,
+                "after_sensitive": {
+                    "response_headers": {},
+                    "retry": {}
+                }
+            },
+            "action_reason": "read_because_config_unknown"
+        },
+        {
+            "address": "aws_instance.grafana_server",
+            "mode": "managed",
+            "type": "aws_instance",
+            "name": "grafana_server",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": [
+                    "create"
+                ],
+                "before": null,
+                "after": {
+                    "instance_type": "t2.micro"
+                }
+            }
+        },
+        {
+            "address": "aws_internet_gateway.gitops_igw",
+            "mode": "managed",
+            "type": "aws_internet_gateway",
+            "name": "gitops_igw",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {
+                "actions": [
+                    "create"
+                ],
+                "before": null,
+                "after": {
+                    "tags": {
+                        "Name": "gitops-igw"
+                    },
+                    "tags_all": {
+                        "Name": "gitops-igw"
+                    },
+                    "timeouts": null
+                },
+                "after_unknown": {
+                    "arn": true,
+                    "id": true,
+                    "owner_id": true,
+                    "tags": {},
+                    "tags_all": {},
+                    "vpc_id": true
+                },
+                "before_sensitive": false,
+                "after_sensitive": {
+                    "tags": {},
+                    "tags_all": {}
+                }
+            }
+        }
+    ],
+    "timestamp": "2024-10-28T12:11:39Z",
+    "applyable": true,
+    "complete": true,
+    "errored": false
+}
