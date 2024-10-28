@@ -43,4 +43,13 @@ jobs:
           terraform plan -out=plan.tfplan
           terraform show -json plan.tfplan > /tmp/plan.json
           cat /tmp/plan.json
-      
+
+      - name: Setup OPA
+        uses: open-policy-agent/setup-opa@v2
+        with: 
+          version: latest
+
+      - name: Run OPA Tests
+        run: |
+          opaout=$(opa eval --data /workspaces/gitops-minicamp-2024/policies/instance-policy.rego --input /tmp/plan.json "data.terraform.deny" | jq -r '.result[].expressions[].value[]')
+          [ -z "$opaout" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --number "${{ github.event.pull_request.number }}" && exit 1
