@@ -187,3 +187,137 @@ Add any required parameters and capabilities.
 - Then chose template and paste in all code text
 
 For more details, visit [AWS documentation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy.html)
+
+### Terraform State File AWS CloudFormation Stack
+
+Save the template as state-management.yaml or I saved it under cfn as backend-resource.yaml.
+
+Run the following command to deploy it:
+
+```bash
+Copy code
+aws cloudformation deploy \
+  --template-file state-management.yaml \
+  --stack-name terraform-state-management \
+  --capabilities CAPABILITY_NAMED_IAM
+  ```
+Configure Terraform to Use Remote State: In your Terraform configuration, add the following backend configuration:
+
+```bash
+Copy code
+terraform {
+  backend "s3" {
+    bucket         = "gitops-minicamp-terraform-state"
+    key            = "terraform.tfstate"
+    region         = "us-west-2" # update to your region
+    dynamodb_table = "terraform-state-lock"
+    encrypt        = true
+  }
+}
+```
+This setup ensures that all team members and workflows interact with the same Terraform state file, preventing conflicts.
+
+### Setting Up GitHub Actions Workflows
+
+With your environment ready, configure GitHub Actions workflows to automate Terraform operations, enforce policies, and estimate infrastructure costs.
+
+Workflow Structure
+Terraform Plan: Generates a plan to preview infrastructure changes.
+```yaml
+- name: Terraform Plan
+  id: plan
+  run: |
+    terraform plan -out=plan.tfplan
+    terraform show -json plan.tfplan > /tmp/plan.json
+    ```
+
+Terraform Apply: Deploys the changes to AWS.
+```yaml
+- name: Terraform Apply
+  run: terraform apply "plan.tfplan"
+```
+
+Terraform Destroy: Removes the infrastructure.
+```yaml
+- name: Terraform Destroy
+  run: terraform destroy -auto-approve
+```
+
+Infracost: Evaluates the cost based on the Terraform configuration.
+```yaml
+- name: Run Infracost
+  run: |
+    infracost breakdown --path /path/to/terraform --format json
+```
+
+Rego Policy Compliance: Ensures only approved instance types are used.
+```yaml
+- name: Run OPA Tests
+  run: |
+    opaout=$(opa eval --data /workspaces/gitops-minicamp-2024/policies/instance-policy.rego --input /tmp/plan.json "data.terraform.deny" | jq -r '.result[].expressions[].value[]' || echo "null")
+    [ "$opaout" = "null" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --number "${{ github.event.pull_request.number }}" && exit 1
+```
+[Refer to](https://docs.github.com/en/actions)
+
+Infrastructure Cost Estimation with Infracost
+Infracost allows cost estimation directly from Terraform configurations, giving insights into expected costs before deployment.
+
+Set Up Infracost:
+[Refer to](https://www.infracost.io/docs/features/config_file/).
+Run Cost Analysis in Workflow:
+```yaml
+- name: Run Infracost
+  run: |
+    infracost breakdown --path /path/to/terraform --format json
+```
+Instance Type Enforcement with Rego Policies
+Rego policies enforce infrastructure compliance by restricting certain instance types, ensuring that only approved instance types are deployed.
+
+Define Rego Policy:
+rego
+
+```json
+package terraform
+
+allowed_instance_types := ["t2.small", "t2.large", "t3.nano"]
+
+deny[msg] if {
+  some resource in input.resource_changes
+  resource.type == "aws_instance"
+  instance_type := resource.change.after.instance_type
+  not instance_type in allowed_instance_types
+  msg := sprintf(
+      "Instance type for '%s' is '%s', but must be one of %v",
+      [resource.address, instance_type, allowed_instance_types]
+  )
+}
+```
+[Test Policy in OPA Playground](https://www.openpolicyagent.org/docs/latest/policy-language/)
+
+## Semantic Versioning and CI/CD
+Semantic versioning is applied to manage code updates, helping organize features, fixes, and breaking changes systematically.
+
+Version Format: MAJOR.MINOR.PATCH (e.g., 1.2.3).
+**Guidelines:**
+-Major: Incompatible API changes.
+-Minor: New functionality.
+-Patch: Bug fixes.
+
+### GitHub Actions vs. Jenkins
+Similarities
+CI/CD Automation: Both GitHub Actions and Jenkins automate building, testing, and deploying.
+Event-Driven Workflows: Workflows are triggered by events (e.g., commits, pull requests).
+Customizable Pipelines: Jenkins uses pipelines; GitHub Actions uses YAML workflows.
+Key Differences
+Hosting and Setup: GitHub Actions is cloud-based and GitHub-integrated, while Jenkins requires self-hosting.
+Ease of Use: GitHub Actions is simpler for GitHub projects; Jenkins offers flexibility but has a steeper learning curve.
+Integration: GitHub Actions is tailored for GitHub; Jenkins integrates broadly across platforms.
+
+**Further Reading**
+[GitHub Actions](https://docs.github.com/en/actions) GitHub Actions Documentation
+[Terraform Documentation](https://www.terraform.io/)
+[Terrafrom Providers](https://registry.terraform.io/browse/providers)
+[Infracost](https://www.infracost.io/docs/features/config_file/)
+[Open Policy Agent](https://www.openpolicyagent.org/docs/latest/policy-language/)
+[Rego Playground](https://play.openpolicyagent.org/)
+[Jenkins Documentation](https://www.jenkins.io/doc/)
