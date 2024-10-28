@@ -6,10 +6,17 @@ More Than Certified GitOps Mini Camp
 - [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
   - [Key Differences](#key-differences)
 - [GitHub Actions Documentation](#github-actions-documentation)
-- [GitHub Codespace setup Terraform installation](#github-codespace-setup-terraform-install)
-- [Configuring the OIDC (OpenID Connect)](#configuring-the-oidc-openid-connect)
-
-
+- [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation)
+- [Configuring OIDC (OpenID Connect)](#configuring-oidc-openid-connect)
+  - [CLI CloudFormation Deployment](#cli-cloudformation-deployment)
+  - [Manual Deployment](#manual-deployment)
+- [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
+- [Setting Up GitHub Actions Workflows](#setting-up-github-actions-workflows)
+- [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
+- [Instance Type Enforcement with Rego Policies](#instance-type-enforcement-with-rego-policies)
+- [Semantic Versioning and CI/CD](#semantic-versioning-and-cicd)
+- [GitHub Actions vs. Jenkins](#github-actions-vs-jenkins)
+- [Further Reading](#further-reading)
 
 
 # Introduction
@@ -25,7 +32,7 @@ In essence:
 
 For example, a version number like 1.2.3 means it's the first major version, with two sets of new features (minor updates) and three sets of bug fixes (patch updates) since version 1.0.0​
 
-### Similarities between GitHub Actions and Jenkins:
+## Similarities between GitHub Actions and Jenkins:
 CI/CD Automation: Both GitHub Actions and Jenkins are widely used for automating Continuous Integration and Continuous Deployment (CI/CD) workflows. They help ensure that code is automatically tested, built, and deployed.
 
 Event-driven Workflows: Both platforms allow workflows to be triggered by events, such as code commits or pull requests.
@@ -47,7 +54,7 @@ Jenkins is typically self-hosted, requiring you to manage the infrastructure, up
 
 **Conclusion:** You can say GitHub Actions is similar to Jenkins in its purpose (CI/CD automation), but GitHub Actions is more streamlined and integrated into GitHub, whereas Jenkins offers more control and flexibility, especially in self-hosted environments. Depending on the complexity of your project and infrastructure needs, one might be more suitable than the other.
 
-### GitHub Actions Documentation:
+## GitHub Actions Documentation:
 1. **Official GitHub Actions Documentation:**
 GitHub provides thorough documentation on how to set up, configure, and use GitHub Actions. It covers topics from basic workflows to more advanced use cases.
 [GitHub Actions Documentation](https://docs.github.com/en/actions)
@@ -144,7 +151,7 @@ sudo apt-get install terraform
 Terraform v1.9.8
 on linux_amd64
 
-### Git is installed in Codespace by default, but you can check by running 
+## Git is installed in Codespace by default, but you can check by running 
 
 ```bash 
 git --version 
@@ -152,7 +159,7 @@ git --version
 **The return should be something like this:** 
 git version 2.46.2
 
-# Configuring the OIDC (OpenID Connect)
+## Configuring the OIDC (OpenID Connect)
 
 An OIDC (OpenID Connect) provider allows AWS to establish a trust relationship with GitHub for roles to assume permissions via OIDC. You can have only one OIDC provider per AWS account for a specific URL (e.g., https://token.actions.githubusercontent.com), but you can associate multiple roles with that provider. If you do not delete an existing OIDC provider, deploying a new stack with the same provider can result in a conflict error.
 
@@ -188,7 +195,7 @@ Add any required parameters and capabilities.
 
 For more details, visit [AWS documentation](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy.html)
 
-### Terraform State File AWS CloudFormation Stack
+## Terraform State File AWS CloudFormation Stack
 
 Save the template as state-management.yaml or I saved it under cfn as backend-resource.yaml.
 
@@ -217,7 +224,7 @@ terraform {
 ```
 This setup ensures that all team members and workflows interact with the same Terraform state file, preventing conflicts.
 
-### Setting Up GitHub Actions Workflows
+## Setting Up GitHub Actions Workflows
 
 With your environment ready, configure GitHub Actions workflows to automate Terraform operations, enforce policies, and estimate infrastructure costs.
 
@@ -276,7 +283,7 @@ Rego policies enforce infrastructure compliance by restricting certain instance 
 Define Rego Policy:
 rego
 
-```json
+```rego
 package terraform
 
 allowed_instance_types := ["t2.small", "t2.large", "t3.nano"]
@@ -295,29 +302,34 @@ deny[msg] if {
 [Test Policy in OPA Playground](https://www.openpolicyagent.org/docs/latest/policy-language/)
 
 ## Semantic Versioning and CI/CD
+
 Semantic versioning is applied to manage code updates, helping organize features, fixes, and breaking changes systematically.
 
-Version Format: MAJOR.MINOR.PATCH (e.g., 1.2.3).
-**Guidelines:**
--Major: Incompatible API changes.
--Minor: New functionality.
--Patch: Bug fixes.
+- **Version Format**: `MAJOR.MINOR.PATCH` (e.g., `1.2.3`).
 
-### GitHub Actions vs. Jenkins
-Similarities
-CI/CD Automation: Both GitHub Actions and Jenkins automate building, testing, and deploying.
-Event-Driven Workflows: Workflows are triggered by events (e.g., commits, pull requests).
-Customizable Pipelines: Jenkins uses pipelines; GitHub Actions uses YAML workflows.
-Key Differences
-Hosting and Setup: GitHub Actions is cloud-based and GitHub-integrated, while Jenkins requires self-hosting.
-Ease of Use: GitHub Actions is simpler for GitHub projects; Jenkins offers flexibility but has a steeper learning curve.
-Integration: GitHub Actions is tailored for GitHub; Jenkins integrates broadly across platforms.
+### Guidelines
+- **Major**: Incompatible API changes.
+- **Minor**: New functionality added in a backward-compatible manner.
+- **Patch**: Backward-compatible bug fixes.
+
+## GitHub Actions vs. Jenkins
+
+### Similarities
+- **CI/CD Automation**: Both GitHub Actions and Jenkins automate building, testing, and deploying.
+- **Event-Driven Workflows**: Workflows are triggered by events (e.g., commits, pull requests).
+- **Customizable Pipelines**: Jenkins uses pipelines; GitHub Actions uses YAML workflows.
+
+### Key Differences
+- **Hosting and Setup**: GitHub Actions is cloud-based and integrated with GitHub, while Jenkins is typically self-hosted, requiring you to manage the infrastructure.
+- **Ease of Use**: GitHub Actions is simpler and more user-friendly for projects hosted on GitHub, while Jenkins offers more flexibility but has a steeper learning curve.
+- **Integration**: GitHub Actions is designed for the GitHub ecosystem, while Jenkins integrates with a wide range of platforms and tools beyond GitHub.
 
 **Further Reading**
-[GitHub Actions](https://docs.github.com/en/actions) GitHub Actions Documentation
-[Terraform Documentation](https://www.terraform.io/)
-[Terrafrom Providers](https://registry.terraform.io/browse/providers)
-[Infracost](https://www.infracost.io/docs/features/config_file/)
-[Open Policy Agent](https://www.openpolicyagent.org/docs/latest/policy-language/)
-[Rego Playground](https://play.openpolicyagent.org/)
-[Jenkins Documentation](https://www.jenkins.io/doc/)
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions) - Official documentation for GitHub Actions.
+- [Terraform Documentation](https://www.terraform.io/) - Terraform’s official documentation.
+- [Terraform Providers](https://registry.terraform.io/browse/providers) - Browse available Terraform providers.
+- [Infracost Documentation](https://www.infracost.io/docs/features/config_file/) - Infracost configuration and usage documentation.
+- [Open Policy Agent Documentation](https://www.openpolicyagent.org/docs/latest/policy-language/) - OPA policy language reference.
+- [Rego Playground](https://play.openpolicyagent.org/) - Try out Rego policies in an interactive playground.
+- [Jenkins Documentation](https://www.jenkins.io/doc/) - Official Jenkins documentation.
