@@ -94,16 +94,20 @@ resource "aws_instance" "grafana_server" {
   tags = {
     Name = "grafana-server"
   }
-}
-check "grafana_health_check" {
-  data "http" "test" {
-    url = "http://${aws_instance.grafana_server.public_ip}:3000"
-    retry {
-      attempts = 5
-    }
-  }
-  assert {
-    condition     = data.http.test.status_code == 200
-    error_message = "Grafana is inaccessible on port 3000."
+# Health check provisioner
+  provisioner "local-exec" {
+    command = <<EOT
+      for i in {1..10}; do
+        if curl -s --head http://${self.public_ip}:3000 | grep "200 OK" > /dev/null; then
+          echo "Grafana is accessible on port 3000."
+          exit 0
+        else
+          echo "Attempt $i: Grafana is not accessible on port 3000 yet."
+          sleep 10
+        fi
+      done
+      echo "Grafana failed to start after 10 attempts"
+      exit 1
+    EOT
   }
 }
