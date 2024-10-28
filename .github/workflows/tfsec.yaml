@@ -1,0 +1,22 @@
+name: tfsec
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  tfsec:
+    name: tfsec
+    runs-on: ubuntu-latest
+    environment: development
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
