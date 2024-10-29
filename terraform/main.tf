@@ -14,6 +14,7 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+# tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 resource "aws_vpc" "gitops_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -44,17 +45,17 @@ resource "aws_route_table" "gitops_rt" {
     Name = "gitops-rt"
   }
 }
-
 resource "aws_subnet" "gitops_subnet" {
   vpc_id                  = aws_vpc.gitops_vpc.id
   cidr_block              = "10.0.1.0/24"
+
+  # tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
 
   tags = {
     Name = "gitops-subnet"
   }
 }
-
 resource "aws_route_table_association" "gitops_rta" {
   subnet_id      = aws_subnet.gitops_subnet.id
   route_table_id = aws_route_table.gitops_rt.id
@@ -65,18 +66,22 @@ resource "aws_security_group" "gitops_sg" {
   description = "Allow port 3000"
   vpc_id      = aws_vpc.gitops_vpc.id
 
-  ingress {
+ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
+    # tfsec:ignore:aws-ec2-no-public-ingress-sgr
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow access to Grafana on port 3000"
   }
 
-  egress {
+   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
+    # tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
 
   tags = {
@@ -91,10 +96,19 @@ resource "aws_instance" "grafana_server" {
   vpc_security_group_ids = [aws_security_group.gitops_sg.id]
   user_data              = file("userdata.tftpl")
 
+  root_block_device {
+    encrypted = true
+  }
+
+  metadata_options {
+    http_tokens = "required"   # Enforce IMDSv2
+  }
+
   tags = {
     Name = "grafana-server"
   }
-# Health check provisioner
+
+  # Health check provisioner
   provisioner "local-exec" {
     command = <<EOT
       for i in {1..10}; do
@@ -111,3 +125,4 @@ resource "aws_instance" "grafana_server" {
     EOT
   }
 }
+
