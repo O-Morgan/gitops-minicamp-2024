@@ -13,4 +13,11 @@ terraform {
 
 provider "aws" {
   region = var.region
+
+  default_tags {
+    tags = {
+      Service     = "GitOps Minicamp 2024"  # Indicates the name of this project or application
+      Environment = "development"           # Indicates the deployment environment (e.g., Development)
+    }
+  }
 }
