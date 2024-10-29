@@ -114,11 +114,12 @@ provisioner "local-exec" {
   command = <<EOT
     bash -c '
       for ((i=1; i<=20; i++)); do
-        if curl -s -L http://${self.public_ip}:3000/login | grep "Welcome to Grafana" > /dev/null; then
-          echo "Grafana is accessible on port 3000."
+        response=$(curl -s -o /dev/null -w "%%{http_code}" http://${self.public_ip}:3000/api/health)
+        if [ "$response" -eq "200" ]; then
+          echo "Grafana is accessible and healthy on port 3000."
           exit 0
         else
-          echo "Attempt $i: Grafana is not accessible on port 3000 yet."
+          echo "Attempt $i: Grafana health check failed, not accessible on port 3000 yet."
           sleep 20
         fi
       done
