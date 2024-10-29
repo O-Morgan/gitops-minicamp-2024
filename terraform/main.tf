@@ -115,7 +115,7 @@ provisioner "local-exec" {
     bash -c '
       for ((i=1; i<=20; i++)); do
         response=$(curl -s -o /dev/null -w "%{http_code}" http://${self.public_ip}:3000/api/health)
-        if [ "$response" -eq 200 ]; then
+        if [ "$response" -eq "200" ]; then
           echo "Grafana is accessible and healthy on port 3000."
           exit 0
         else
