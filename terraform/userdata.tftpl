@@ -1,9 +1,19 @@
 #!/bin/bash
-sudo apt-get install -y apt-transport-https software-properties-common wget &&
-sudo mkdir -p /etc/apt/keyrings/ &&
-wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null &&
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list &&
-sudo apt-get update &&
-sudo apt-get install -y grafana &&
-sudo systemctl start grafana-server &&
+
+# Install dependencies
+sudo apt-get install -y apt-transport-https software-properties-common wget
+
+# Add the Grafana GPG key
+sudo mkdir -p /etc/apt/keyrings/
+wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+
+# Add Grafana to the apt sources list
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+
+# Update package list and install Grafana
+sudo apt-get update
+sudo apt-get install -y grafana
+
+# Start and enable the Grafana service
+sudo systemctl start grafana-server
 sudo systemctl enable grafana-server
