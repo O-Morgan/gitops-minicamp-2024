@@ -1,4 +1,4 @@
-name: Terraform Security Scan
+name: Terraform Security Scanner
 on:
   push:
     branches:

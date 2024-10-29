@@ -1,4 +1,4 @@
-name: Lint
+name: Terraform Linter
 on:
   push:
     branches: [ main ]
