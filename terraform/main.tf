@@ -126,6 +126,7 @@ provisioner "local-exec" {
       exit 1
     '
   EOT
+  }
 }
 
 
