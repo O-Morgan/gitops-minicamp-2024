@@ -114,7 +114,7 @@ provisioner "local-exec" {
   command = <<EOT
     bash -c '
       for ((i=1; i<=20; i++)); do
-        if curl -s http://${self.public_ip}:3000 | grep "Welcome to Grafana" > /dev/null; then
+        if curl -s -L http://${self.public_ip}:3000/login | grep "Welcome to Grafana" > /dev/null; then
           echo "Grafana is accessible on port 3000."
           exit 0
         else
@@ -126,7 +126,6 @@ provisioner "local-exec" {
       exit 1
     '
   EOT
-  }
 }
 
 
