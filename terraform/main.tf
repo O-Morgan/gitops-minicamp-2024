@@ -110,20 +110,22 @@ resource "aws_instance" "grafana_server" {
   }
 
   # Health check provisioner
- provisioner "local-exec" {
+provisioner "local-exec" {
   command = <<EOT
-    for ((i=1; i<=20; i++)); do
-      if curl -s --head http://${self.public_ip}:3000 | grep "200 OK" > /dev/null; then
-        echo "Grafana is accessible on port 3000."
-        exit 0
-      else
-        echo "Attempt $i: Grafana is not accessible on port 3000 yet."
-        sleep 20
-      fi
-    done
-    echo "Grafana failed to start after 20 attempts"
-    exit 1
+    bash -c '
+      for ((i=1; i<=20; i++)); do
+        if curl -s --head http://${self.public_ip}:3000 | grep "200 OK" > /dev/null; then
+          echo "Grafana is accessible on port 3000."
+          exit 0
+        else
+          echo "Attempt $i: Grafana is not accessible on port 3000 yet."
+          sleep 20
+        fi
+      done
+      echo "Grafana failed to start after 20 attempts"
+      exit 1
+    '
   EOT
-  }
 }
+
 
