@@ -24,6 +24,11 @@ More Than Certified GitOps Mini Camp
     - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
     - [Step 3: Define and Enforce Rego Policies in GitHub Actions](#step-3-define-and-enforce-rego-policies-in-github-actions)
     - [Step 4: Integrate Policy Check into GitHub Actions Workflow](#step-4-integrate-policy-check-into-github-actions-workflow)
+- [Grafana Overview](#grafana-overview)
+  - [Initial Setup and Bootstrap for EC2](#initial-setup-and-bootstrap-for-ec2)
+  - [Accessing Grafana](#accessing-grafana)
+  - [Default Login Credentials](#default-login-credentials)
+  - [Best Practices for Grafana Access and Security](#best-practices-for-grafana-access-and-security)
 - [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
 - [Further Reading](#further-reading)
 
