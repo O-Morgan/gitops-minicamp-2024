@@ -17,7 +17,7 @@ More Than Certified GitOps Mini Camp
     - [TFLint](#tflint)
     - [TFSec](#tfsec)
   - [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
-  - [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
+  - [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Complianc](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
     - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
       - [Step 1: Prepare Terraform Configurations for OPA Compliance](#step-1-prepare-terraform-configurations-for-opa-compliance)
       - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
@@ -26,7 +26,6 @@ More Than Certified GitOps Mini Camp
   - [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
   - [Further Reading](#further-reading)
 </details>
-
 
 <details>
   <summary>Project Architecture</summary>
