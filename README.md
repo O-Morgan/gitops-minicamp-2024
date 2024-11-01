@@ -1,4 +1,4 @@
-More Than Certified GitOps Mini Camp 2024
+GitOps Mini Camp 2024 - More Than Certified 
 
 <details>
   <summary>Table of Contents</summary>
