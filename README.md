@@ -6,30 +6,24 @@ More Than Certified GitOps Mini Camp
 - [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
   - [Key Differences](#key-differences)
 - [GitHub Actions Documentation](#github-actions-documentation)
-- [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation)
-- [Configuring OIDC (OpenID Connect)](#configuring-oidc-openid-connect)
-  - [CLI CloudFormation Deployment](#cli-cloudformation-deployment)
+- [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation-setting-up-the-environment)
+- [Configuring OIDC (OpenID Connect)](#configuring-the-oidc-openid-connect)
+  - [CLI CloudFormation Deployment](#cli-cloud-formation-deployment)
   - [Manual Deployment](#manual-deployment)
 - [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
-- [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
-  - [Workflow Structure](#workflow-structure)
-  - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
-    - [Preparing Terraform Configurations for OPA Compliance](#preparing-terraform-configurations-for-opa-compliance)
-    - [Enforcing Instance Type Policy with Rego](#enforcing-instance-type-policy-with-rego)
-- [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
+- [Setting Up GitHub Actions Workflows](#setting-up-github-actions-specifically-for-your-project)
 - [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
-  - [TFLint: Configuration Linting](#tflint-configuration-linting)
-  - [tfsec: Security Analysis](#tfsec-security-analysis)
-    - [Example Use Cases for TFSec](#example-use-cases-for-tfsec)
-    - [Ignoring Specific TFSec Warnings](#ignoring-specific-tfsec-warnings)
+  - [TFLint](#tflint-configuration-linting)
+  - [TFSec](#tfsec-introduction)
+- [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
+- [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
+  - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
+    - [Step 1: Prepare Terraform Configurations for OPA Compliance](#step-1-prepare-terraform-configurations-for-opa-compliance)
+    - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
+    - [Step 3: Define and Enforce Rego Policies in GitHub Actions](#step-3-define-and-enforce-rego-policies-in-github-actions)
+    - [Step 4: Integrate Policy Check into GitHub Actions Workflow](#step-4-integrate-policy-check-into-github-actions-workflow)
 - [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
-- [GitHub Actions vs. Jenkins](#github-actions-vs-jenkins)
-  - [Similarities](#similarities)
-  - [Key Differences](#key-differences-1)
 - [Further Reading](#further-reading)
-
-
-
 
 # Introduction
 I am utilising GitHub Actions to automate the deployment of features into my AWS environment. By leveraging continuous integration and deployment (CI/CD) pipelines, I ensure that my code is tested, built, and deployed efficiently and consistently. Additionally, I implement semantic versioning to manage and track software changes, allowing for clear version updates that follow a predictable and standardised format. This approach ensures that each new feature, bug fix, or breaking change is systematically reflected in the versioning. This automation and versioning strategy simplifies my development process, allowing me to focus on delivering high-quality features with minimal manual intervention whilst maintaining full control over the release cycle.
@@ -80,42 +74,7 @@ GitHub also offers interactive tutorials on how to use GitHub Actions, allowing 
 [GitHub Learning Lab - GitHub Actions](https://lab.github.com/githubtraining/github-actions:-hello-world)
 
 
-How to set up GitHub Actions specifically for your project. Here’s an example of a simple workflow definition
-file name = .github/workflows/ci.yml
-
-```yml
-name: CI Pipeline
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3 # ensure the latest version 
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Tests
-        run: npm test
-```
-
-**Official Jenkins Documentation:**
-[Jenkins Documentation](https://www.jenkins.io/doc/)
-
-## GitHub Codespace setup Terraform installation
+## GitHub Codespace setup Terraform installation (setting up the environment)
 
 To install Terraform in GitHub Codespaces, which runs on Linux ubuntu by default, you'll need to follow the Linux-specific installation instructions.
 
@@ -250,7 +209,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3 # ensure the latest version 
+        uses: actions/checkout@v4 # ensure the latest version 
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -438,22 +397,28 @@ Removes infrastructure when needed.
   run: terraform destroy -auto-approve
 ```
 
-###Detailed Steps for OPA and Rego Policy Compliance
+### Detailed Steps for OPA and Rego Policy Compliance
 
-A. Preparing Terraform Configurations for OPA Compliance
-Issue: To validate Terraform configurations with OPA, exporting Terraform plans in JSON format is necessary.
+- Step 1: Prepare Terraform Configurations for OPA Compliance
+Issue: To validate Terraform configurations with OPA, it’s essential to first export the Terraform plans as JSON.
 
-Solution: Export the Terraform plan as a JSON file to use as input for OPA compliance checks.
+Solution: Export the Terraform plan as a JSON file. This JSON output will then be used in the OPA Playground for testing and further adjustments before incorporating policies into GitHub Actions.
 
 Export Command:
+
 ```bash
 terraform show -json tfplan.binary > tfplan.json
 ```
 
-B. Enforcing Instance Type Policy with Rego
-Define Rego policies to control which instance types are permissible. This policy will be stored in the policies folder as instance-policy.rego for GitHub Actions to reference.
+- Step 2: Validate and Refine Policies in OPA Playground
+Upload JSON to OPA Playground: Use the exported tfplan.json in the OPA Playground to validate and refine your Rego policies.
+Test Policy Logic: Use the playground’s output to identify policy violations and ensure the logic works as expected.
+Refine Policies: Adjust and clean up the policies as needed. Once they’re verified to work in the playground, they are ready for implementation in your CI/CD pipeline.
 
-Example Rego Policy:
+- Step 3: Define and Enforce Rego Policies in GitHub Actions
+After verifying the policy in the OPA Playground, you can integrate it into your GitHub Actions workflow to enforce policies on instance types or other requirements before deployment.
+
+Define Rego Policy: Create policies in a dedicated policies folder within your project. Here’s an example instance-policy.rego that enforces approved instance types.
 ```rego
 package terraform
 
@@ -470,29 +435,41 @@ deny[msg] if {
   )
 }
 ```
-Steps to Evaluate Policy:
-Export Terraform plan as JSON:
 
-```bash
-terraform show -json tfplan.binary > tfplan.json
-Run OPA to enforce policy:
+- Step 4: Integrate Policy Check into GitHub Actions Workflow
+Run OPA Evaluation: In your GitHub Actions workflow, use the opa eval command to run compliance checks based on your Rego policies. Place the following step in your workflow YAML file:
+```yaml
+- name: Run OPA Compliance Check
+  run: |
+    opaout=$(opa eval --data policies/instance-policy.rego --input /tmp/plan.json "data.terraform.deny" | jq -r '.result[].expressions[].value[]' || echo "null")
+    [ "$opaout" = "null" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --
 ```
-```bash
-opa eval --data policies/instance-policy.rego --input tfplan.json "data.terraform.deny"
-```
-Tip: You can test your Rego policies in the OPA Playground to ensure they work as expected before integrating them into the workflow.
 
-## GitHub Actions vs. Jenkins
+## Grafana Health Checks and Workaround
+Grafana can be accessed on port 3000, typically with the default login admin / admin. I encountered issues when using the API health endpoint, as it doesn’t always return a 200 OK. Instead, the following health check confirms accessibility:
 
-### Similarities
-- **CI/CD Automation**: Both GitHub Actions and Jenkins automate building, testing, and deploying.
-- **Event-Driven Workflows**: Workflows are triggered by events (e.g., commits, pull requests).
-- **Customizable Pipelines**: Jenkins uses pipelines; GitHub Actions uses YAML workflows.
+Health Check Provisioner:
 
-### Key Differences
-- **Hosting and Setup**: GitHub Actions is cloud-based and integrated with GitHub, while Jenkins is typically self-hosted, requiring you to manage the infrastructure.
-- **Ease of Use**: GitHub Actions is simpler and more user-friendly for projects hosted on GitHub, while Jenkins offers more flexibility but has a steeper learning curve.
-- **Integration**: GitHub Actions is designed for the GitHub ecosystem, while Jenkins integrates with a wide range of platforms and tools beyond GitHub.
+bash
+Copy code
+provisioner "local-exec" {
+  command = <<EOT
+    bash -c '
+      for ((i=1; i<=20; i++)); do
+        response=$(curl -s -o /dev/null -w "%{http_code}" http://${self.public_ip}:3000/api/health)
+        if [ "$response" -eq "200" ]; then
+          echo "Grafana is accessible and healthy on port 3000."
+          exit 0
+        else
+          echo "Attempt $i: Grafana health check failed, not accessible on port 3000 yet."
+          sleep 20
+        fi
+      done
+      echo "Grafana failed to start after 20 attempts"
+      exit 1
+    '
+  EOT
+}
 
 **Further Reading**
 
