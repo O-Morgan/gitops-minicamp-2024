@@ -49,7 +49,12 @@ jobs:
         with: 
           version: latest
 
-      - name: Run OPA Tests
+      - name: Run OPA Tests for instance policy
         run: |
           opaout=$(opa eval --data /workspaces/gitops-minicamp-2024/policies/instance-policy.rego --input /tmp/plan.json "data.terraform.deny" | jq -r '.result[].expressions[].value[]' || echo "null")
           [ "$opaout" = "null" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --number "${{ github.event.pull_request.number }}" && exit 1
+
+      - name: Run OPA Tests for Cost Difference Policy
+        run: |
+          costout=$(opa eval --data /workspaces/gitops-minicamp-2024/policies/cost-policy.rego --input /tmp/infracost.json "data.infracost.deny" | jq -r '.result[].expressions[].value[]' || echo "null")
+          [ "$costout" = "null" ] && exit 0 || echo "$costout" && gh pr comment --body "### $costout" --number "${{ github.event.pull_request.number }}" && exit 1
