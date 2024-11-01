@@ -1,4 +1,4 @@
-# gitops-minicamp-2024
+gitops-minicamp-2024
 More Than Certified GitOps Mini Camp
 
 ## Table of Contents
@@ -11,12 +11,24 @@ More Than Certified GitOps Mini Camp
   - [CLI CloudFormation Deployment](#cli-cloudformation-deployment)
   - [Manual Deployment](#manual-deployment)
 - [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
-- [Setting Up GitHub Actions Workflows](#setting-up-github-actions-workflows)
+- [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
+  - [Workflow Structure](#workflow-structure)
+  - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
+    - [Preparing Terraform Configurations for OPA Compliance](#preparing-terraform-configurations-for-opa-compliance)
+    - [Enforcing Instance Type Policy with Rego](#enforcing-instance-type-policy-with-rego)
 - [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
-- [Instance Type Enforcement with Rego Policies](#instance-type-enforcement-with-rego-policies)
-- [Semantic Versioning and CI/CD](#semantic-versioning-and-cicd)
+- [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
+  - [TFLint: Configuration Linting](#tflint-configuration-linting)
+  - [tfsec: Security Analysis](#tfsec-security-analysis)
+    - [Example Use Cases for TFSec](#example-use-cases-for-tfsec)
+    - [Ignoring Specific TFSec Warnings](#ignoring-specific-tfsec-warnings)
+- [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
 - [GitHub Actions vs. Jenkins](#github-actions-vs-jenkins)
+  - [Similarities](#similarities)
+  - [Key Differences](#key-differences-1)
 - [Further Reading](#further-reading)
+
+
 
 
 # Introduction
@@ -202,7 +214,6 @@ Save the template as state-management.yaml or I saved it under cfn as backend-re
 Run the following command to deploy it:
 
 ```bash
-Copy code
 aws cloudformation deploy \
   --template-file state-management.yaml \
   --stack-name terraform-state-management \
@@ -211,7 +222,6 @@ aws cloudformation deploy \
 Configure Terraform to Use Remote State: In your Terraform configuration, add the following backend configuration:
 
 ```bash
-Copy code
 terraform {
   backend "s3" {
     bucket         = "gitops-minicamp-terraform-state"
@@ -222,95 +232,255 @@ terraform {
   }
 }
 ```
-This setup ensures that all team members and workflows interact with the same Terraform state file, preventing conflicts.
+## How to set up GitHub Actions specifically for your project. Here’s an example of a simple workflow definition
+file name = .github/workflows/ci.yml
 
-## Setting Up GitHub Actions Workflows
+```yml
+name: CI Pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-With your environment ready, configure GitHub Actions workflows to automate Terraform operations, enforce policies, and estimate infrastructure costs.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3 # ensure the latest version 
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+```
+
+**Official Jenkins Documentation:**
+[Jenkins Documentation](https://www.jenkins.io/doc/)
+
+## Handling Terraform Security with TFLint and tfsec
+To improve security and configuration best practices, integrate TFLint and tfsec within your workflow.
+
+In Terraform projects, security and configuration scanning play a critical role in ensuring that infrastructure adheres to best practices, security guidelines, and organizational policies. This repository integrates TFLint and tfsec within GitHub Actions to automate these checks, flagging potential issues early in the deployment pipeline.
+
+TFLint: Configuration Linting
+Purpose: TFLint is a linter for Terraform that checks for issues such as misconfigurations, improper resource types, and potential errors in syntax or structure. It’s designed to catch configuration issues before they lead to deployment failures.
+
+Usage: TFLint runs automatically within GitHub Actions, providing feedback directly on any detected misconfigurations.
+
+TFLint:
+Runs as a GitHub Action to catch misconfigurations and linting errors in your Terraform files.
+
+Example Action:
+```yaml
+name: TFLint Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          version: v0.52.0
+
+      - name: Run TFLint
+        run: tflint --format compact
+int --format compact
+```
+TFSec: Introduction
+tfsec is a static analysis tool designed to help identify potential security risks in Terraform configurations. By scanning .tf files, tfsec detects possible misconfigurations and security issues based on best practices and security standards, making it an essential tool for maintaining secure infrastructure.
+
+With tfsec, you can proactively address vulnerabilities before deployment, including checks for:
+
+Misconfigured security groups
+Insufficient encryption settings
+Inadequate IAM permissions
+Publicly accessible resources that should be private
+By integrating tfsec into your workflow, you can automatically scan Terraform code to ensure compliance with security policies and industry best practices, such as the CIS (Center for Internet Security) benchmarks and the AWS Well-Architected Framework.
+
+exampl Action:
+```yaml
+name: TFSec Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  security_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install TFSec
+        run: |
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install.sh | bash
+
+      - name: Run TFSec
+        run: tfsec --format compact
+```
+
+Example Use Cases for TFSec
+Publicly Accessible Resources: tfsec can detect if a resource is exposed to the public (e.g., a security group allowing access from 0.0.0.0/0).
+Lack of Encryption: Identifies unencrypted resources, such as unencrypted S3 buckets or unencrypted root volumes for EC2 instances.
+Missing IAM Role Constraints: Flags resources with overly permissive IAM roles or policies, encouraging the principle of least privilege.
+Ignoring Specific tfsec Warnings
+In some cases, such as for a development environment or proof-of-concept deployment, it may be necessary to override certain security warnings. tfsec provides an ignore feature to selectively bypass specific warnings.
+
+Example
+For instance, to allow a public IP for a subnet in development, add an ignore comment to the relevant Terraform code:
+
+```hcl
+resource "aws_subnet" "example_subnet" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.0.0/24"
+  # tfsec:ignore:aws-ec2-no-public-ip-subnet
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "example-subnet"
+  }
+}
+```
+This ignore comment tells tfsec to skip the aws-ec2-no-public-ip-subnet rule for this specific configuration, allowing for flexibility while still maintaining security checks on the rest of your infrastructure.
+
+Integrating tfsec into your CI/CD pipeline helps maintain a secure codebase, and its ignore functionality provides a balance between enforcing policies and allowing necessary exceptions.
+
+## Infrastructure Cost Estimation with Infracost
+
+Infracost estimates infrastructure costs directly from Terraform configurations, providing insights into expected costs before deployment.
+
+Setup and Integration:
+
+```yaml
+- name: Run Infracost
+  run: |
+    infracost breakdown --path /path/to/terraform --format json
+```
+
+Tagging Requirements: If Infracost flags missing tags and you struggling to address the issue, add a default tag to the AWS provider block configuration:
+
+```hcl
+
+  default_tags {
+    tags = {
+      Service     = "GitOps Minicamp 2024"  # Indicates the name of this project or application
+      Environment = "Dev" # Indicates the deployment environment (e.g., Development) Infracost only recognises Dev, Stage or Prod shorthand
+    }
+  }
+}
+```
+
+## Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance
+With your environment ready, you can configure GitHub Actions workflows to automate Terraform operations, enforce compliance policies with OPA/Rego, and estimate infrastructure costs. This setup uses JSON exports of Terraform plans for OPA validation, a structured policies folder, and Rego policies to ensure compliance before deployment.
 
 Workflow Structure
-Terraform Plan: Generates a plan to preview infrastructure changes.
+Terraform Plan:
+This step generates a Terraform plan in JSON format, which is then used as input for policy checks.
+
 ```yaml
 - name: Terraform Plan
   id: plan
   run: |
     terraform plan -out=plan.tfplan
     terraform show -json plan.tfplan > /tmp/plan.json
-    ```
+OPA Compliance Check with Rego:
+Place all Rego policies inside a policies folder to maintain organization and specify compliance checks in your workflow. The following step runs the compliance check by calling the instance-policy.rego file from the policies directory.
 
-Terraform Apply: Deploys the changes to AWS.
+```yaml
+- name: Run OPA Compliance Check
+  run: |
+    opaout=$(opa eval --data /workspaces/gitops-minicamp-2024/policies/instance-policy.rego --input /tmp/plan.json "data.terraform.deny" | jq -r '.result[].expressions[].value[]' || echo "null")
+    [ "$opaout" = "null" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --number "${{ github.event.pull_request.number }}" && exit 1
+```
+Note: If any policy is violated, a comment will be added to the PR with the specific issue, and the action will exit with a non-zero status to prevent deployment.
+
+
+Terraform Apply:
+Deploys the changes to AWS only if the OPA compliance check passes.
+
 ```yaml
 - name: Terraform Apply
   run: terraform apply "plan.tfplan"
-```
+  ```
 
-Terraform Destroy: Removes the infrastructure.
+Terraform Destroy (Optional):
+Removes infrastructure when needed.
+
 ```yaml
 - name: Terraform Destroy
   run: terraform destroy -auto-approve
 ```
 
-Infracost: Evaluates the cost based on the Terraform configuration.
-```yaml
-- name: Run Infracost
-  run: |
-    infracost breakdown --path /path/to/terraform --format json
+###Detailed Steps for OPA and Rego Policy Compliance
+
+A. Preparing Terraform Configurations for OPA Compliance
+Issue: To validate Terraform configurations with OPA, exporting Terraform plans in JSON format is necessary.
+
+Solution: Export the Terraform plan as a JSON file to use as input for OPA compliance checks.
+
+Export Command:
+```bash
+terraform show -json tfplan.binary > tfplan.json
 ```
 
-Rego Policy Compliance: Ensures only approved instance types are used.
-```yaml
-- name: Run OPA Tests
-  run: |
-    opaout=$(opa eval --data /workspaces/gitops-minicamp-2024/policies/instance-policy.rego --input /tmp/plan.json "data.terraform.deny" | jq -r '.result[].expressions[].value[]' || echo "null")
-    [ "$opaout" = "null" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --number "${{ github.event.pull_request.number }}" && exit 1
-```
-[Refer to](https://docs.github.com/en/actions)
+B. Enforcing Instance Type Policy with Rego
+Define Rego policies to control which instance types are permissible. This policy will be stored in the policies folder as instance-policy.rego for GitHub Actions to reference.
 
-Infrastructure Cost Estimation with Infracost
-Infracost allows cost estimation directly from Terraform configurations, giving insights into expected costs before deployment.
-
-Set Up Infracost:
-[Refer to](https://www.infracost.io/docs/features/config_file/).
-Run Cost Analysis in Workflow:
-```yaml
-- name: Run Infracost
-  run: |
-    infracost breakdown --path /path/to/terraform --format json
-```
-Instance Type Enforcement with Rego Policies
-Rego policies enforce infrastructure compliance by restricting certain instance types, ensuring that only approved instance types are deployed.
-
-Define Rego Policy:
-rego
-
+Example Rego Policy:
 ```rego
 package terraform
 
-allowed_instance_types := ["t2.small", "t2.large", "t3.nano"]
+allowed_instance_types := ["t2.small", "t3.nano"]
 
 deny[msg] if {
-  some resource in input.resource_changes
+  resource := input.resource_changes[_]
   resource.type == "aws_instance"
   instance_type := resource.change.after.instance_type
   not instance_type in allowed_instance_types
   msg := sprintf(
-      "Instance type for '%s' is '%s', but must be one of %v",
-      [resource.address, instance_type, allowed_instance_types]
+      "Instance type '%s' is not approved",
+      [instance_type]
   )
 }
 ```
-[Test Policy in OPA Playground](https://www.openpolicyagent.org/docs/latest/policy-language/)
+Steps to Evaluate Policy:
+Export Terraform plan as JSON:
 
-## Semantic Versioning and CI/CD
-
-Semantic versioning is applied to manage code updates, helping organize features, fixes, and breaking changes systematically.
-
-- **Version Format**: `MAJOR.MINOR.PATCH` (e.g., `1.2.3`).
-
-### Guidelines
-- **Major**: Incompatible API changes.
-- **Minor**: New functionality added in a backward-compatible manner.
-- **Patch**: Backward-compatible bug fixes.
+```bash
+terraform show -json tfplan.binary > tfplan.json
+Run OPA to enforce policy:
+```
+```bash
+opa eval --data policies/instance-policy.rego --input tfplan.json "data.terraform.deny"
+```
+Tip: You can test your Rego policies in the OPA Playground to ensure they work as expected before integrating them into the workflow.
 
 ## GitHub Actions vs. Jenkins
 
