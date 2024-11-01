@@ -3,29 +3,32 @@ More Than Certified GitOps Mini Camp
 
 <details>
   <summary>Table of Contents</summary>
-  - [Introduction](#introduction)
-  - [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
-  - [Key Differences](#key-differences)
-  - [GitHub Actions Documentation](#github-actions-documentation)
-  - [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation)
-  - [Configuring OIDC (OpenID Connect)](#configuring-oidc-openid-connect)
-    - [CLI CloudFormation Deployment](#cli-cloudformation-deployment)
-    - [Manual Deployment](#manual-deployment)
-  - [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
-  - [Setting Up GitHub Actions Workflows](#setting-up-github-actions-workflows)
-  - [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
-    - [TFLint](#tflint)
-    - [TFSec](#tfsec)
-  - [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
-  - [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Complianc](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
-    - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
-      - [Step 1: Prepare Terraform Configurations for OPA Compliance](#step-1-prepare-terraform-configurations-for-opa-compliance)
-      - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
-      - [Step 3: Define and Enforce Rego Policies in GitHub Actions](#step-3-define-and-enforce-rego-policies-in-github-actions)
-      - [Step 4: Integrate Policy Check into GitHub Actions Workflow](#step-4-integrate-policy-check-into-github-actions-workflow)
-  - [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
-  - [Further Reading](#further-reading)
+
+- [Introduction](#introduction)
+- [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
+- [Key Differences](#key-differences)
+- [GitHub Actions Documentation](#github-actions-documentation)
+- [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation)
+- [Configuring OIDC (OpenID Connect)](#configuring-oidc-openid-connect)
+  - [CLI CloudFormation Deployment](#cli-cloudformation-deployment)
+  - [Manual Deployment](#manual-deployment)
+- [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
+- [Setting Up GitHub Actions Workflows](#setting-up-github-actions-workflows)
+- [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
+  - [TFLint](#tflint)
+  - [TFSec](#tfsec)
+- [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
+- [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
+  - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
+    - [Step 1: Prepare Terraform Configurations for OPA Compliance](#step-1-prepare-terraform-configurations-for-opa-compliance)
+    - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
+    - [Step 3: Define and Enforce Rego Policies in GitHub Actions](#step-3-define-and-enforce-rego-policies-in-github-actions)
+    - [Step 4: Integrate Policy Check into GitHub Actions Workflow](#step-4-integrate-policy-check-into-github-actions-workflow)
+- [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
+- [Further Reading](#further-reading)
+
 </details>
+
 
 <details>
   <summary>Project Architecture</summary>
