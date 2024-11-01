@@ -1,33 +1,40 @@
 gitops-minicamp-2024
 More Than Certified GitOps Mini Camp
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
+<details>
+  <summary>Table of Contents</summary>
+  - [Introduction](#introduction)
+  - [Similarities between GitHub Actions and Jenkins](#similarities-between-github-actions-and-jenkins)
   - [Key Differences](#key-differences)
-- [GitHub Actions Documentation](#github-actions-documentation)
-- [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation-setting-up-the-environment)
-- [Configuring OIDC (OpenID Connect)](#configuring-the-oidc-openid-connect)
-  - [CLI CloudFormation Deployment](#cli-cloud-formation-deployment)
-  - [Manual Deployment](#manual-deployment)
-- [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
-- [Setting Up GitHub Actions Workflows](#setting-up-github-actions-specifically-for-your-project)
-- [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
-  - [TFLint](#tflint-configuration-linting)
-  - [TFSec](#tfsec-introduction)
-- [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
-- [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
-  - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
-    - [Step 1: Prepare Terraform Configurations for OPA Compliance](#step-1-prepare-terraform-configurations-for-opa-compliance)
-    - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
-    - [Step 3: Define and Enforce Rego Policies in GitHub Actions](#step-3-define-and-enforce-rego-policies-in-github-actions)
-    - [Step 4: Integrate Policy Check into GitHub Actions Workflow](#step-4-integrate-policy-check-into-github-actions-workflow)
-- [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
-- [Further Reading](#further-reading)
+  - [GitHub Actions Documentation](#github-actions-documentation)
+  - [GitHub Codespace Setup and Terraform Installation](#github-codespace-setup-and-terraform-installation)
+  - [Configuring OIDC (OpenID Connect)](#configuring-oidc-openid-connect)
+    - [CLI CloudFormation Deployment](#cli-cloudformation-deployment)
+    - [Manual Deployment](#manual-deployment)
+  - [Terraform State File AWS CloudFormation Stack](#terraform-state-file-aws-cloudformation-stack)
+  - [Setting Up GitHub Actions Workflows](#setting-up-github-actions-workflows)
+  - [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
+    - [TFLint](#tflint)
+    - [TFSec](#tfsec)
+  - [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
+  - [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
+    - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
+      - [Step 1: Prepare Terraform Configurations for OPA Compliance](#step-1-prepare-terraform-configurations-for-opa-compliance)
+      - [Step 2: Validate and Refine Policies in OPA Playground](#step-2-validate-and-refine-policies-in-opa-playground)
+      - [Step 3: Define and Enforce Rego Policies in GitHub Actions](#step-3-define-and-enforce-rego-policies-in-github-actions)
+      - [Step 4: Integrate Policy Check into GitHub Actions Workflow](#step-4-integrate-policy-check-into-github-actions-workflow)
+  - [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
+  - [Further Reading](#further-reading)
+</details>
 
-<p align="center">
-  <img src="images/GitOps%20Architecture%20.png" alt="GitOps Project Architecture">
-</p>
+
+<details>
+  <summary>Project Architecture</summary>
+  <p align="center">
+    <img src="images/GitOps%20Architecture%20.png" alt="GitOps Architecture">
+  </p>
+</details>
+
 
 # Introduction
 I am utilising GitHub Actions to automate the deployment of features into my AWS environment. By leveraging continuous integration and deployment (CI/CD) pipelines, I ensure that my code is tested, built, and deployed efficiently and consistently. Additionally, I implement semantic versioning to manage and track software changes, allowing for clear version updates that follow a predictable and standardised format. This approach ensures that each new feature, bug fix, or breaking change is systematically reflected in the versioning. This automation and versioning strategy simplifies my development process, allowing me to focus on delivering high-quality features with minimal manual intervention whilst maintaining full control over the release cycle.
