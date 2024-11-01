@@ -15,7 +15,10 @@ More Than Certified GitOps Mini Camp 2024
 - [Setting Up GitHub Actions Workflows](#setting-up-github-actions-workflows)
 - [Handling Terraform Security with TFLint and tfsec](#handling-terraform-security-with-tflint-and-tfsec)
   - [TFLint](#tflint)
-  - [TFSec](#tfsec)
+  - [TFSec](#tfsec) - [Terraform Code Formatting and Validation](#terraform-code-formatting-and-validation)
+- [Terraform Code Formatting and Validation](#terraform-code-formatting-and-validation)
+  - [Terraform fmt](#terraform-fmt)
+  - [Terraform validate](#terraform-validate)
 - [Infrastructure Cost Estimation with Infracost](#infrastructure-cost-estimation-with-infracost)
 - [Setting Up GitHub Actions Workflows for Terraform with OPA and Rego Policy Compliance](#setting-up-github-actions-workflows-for-terraform-with-opa-and-rego-policy-compliance)
   - [Detailed Steps for OPA and Rego Policy Compliance](#detailed-steps-for-opa-and-rego-policy-compliance)
@@ -347,6 +350,85 @@ resource "aws_subnet" "example_subnet" {
 This ignore comment tells tfsec to skip the aws-ec2-no-public-ip-subnet rule for this specific configuration, allowing for flexibility while still maintaining security checks on the rest of your infrastructure.
 
 Integrating tfsec into your CI/CD pipeline helps maintain a secure codebase, and its ignore functionality provides a balance between enforcing policies and allowing necessary exceptions.
+
+## Terraform Code Formatting and Validation
+Terraform provides tools to ensure consistent formatting and validate configuration files for reliability. Here’s a breakdown of both the manual and automated processes:
+
+terraform fmt: Formats all Terraform configuration files to a standard style.
+terraform validate: Validates the configuration files for syntax and configuration issues.
+1. Running terraform fmt Manually
+To run terraform fmt on all Terraform files in the ./terraform directory, use:
+
+```bash
+terraform fmt ./terraform
+```
+This command formats .tf files only within the specified ./terraform directory. You can also specify individual files if needed:
+
+```bash
+terraform fmt ./terraform/main.tf
+terraform fmt ./terraform/providers.tf
+```
+2. Setting up Pre-Commit Hooks for terraform fmt and terraform validate
+Using pre-commit hooks, you can automate these checks before every commit.
+
+Install pre-commit:
+
+```bash
+pip install pre-commit
+```
+Add a .pre-commit-config.yaml file with configuration for Terraform hooks:
+
+```yaml
+Copy code
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.66.1  # Update to latest stable version
+    hooks:
+      - id: terraform_fmt
+        args: ["./terraform"]
+      - id: terraform_validate
+        args: ["./terraform"]
+```
+Install the pre-commit hooks:
+
+```bash
+pre-commit install
+```
+This configuration ensures that only files in ./terraform are checked for formatting and validated.
+
+3. Integrating terraform fmt and terraform validate in GitHub Actions
+To add these checks to a GitHub Actions workflow, specify the directory containing Terraform files. This setup validates formatting and configuration for every push and pull request:
+
+```yaml
+name: 'Terraform Formatting and Validation'
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Terraform Format Check
+        run: terraform fmt -check ./terraform
+
+      - name: Terraform Validate
+        run: terraform validate ./terraform
+```
+By specifying ./terraform, you ensure the terraform fmt and terraform validate commands target the correct directory. This setup maintains clean, validated infrastructure code across the repository.
 
 ## Infrastructure Cost Estimation with Infracost
 
