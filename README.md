@@ -232,7 +232,7 @@ jobs:
         uses: actions/checkout@v4 # ensure the latest version 
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v8
         with:
           node-version: '16'
 
@@ -382,7 +382,7 @@ Add a .pre-commit-config.yaml file with configuration for Terraform hooks:
 Copy code
 repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.66.1  # Update to latest stable version
+    rev: v1.96.2  # Update to latest stable version
     hooks:
       - id: terraform_fmt
         args: ["./terraform"]
@@ -395,6 +395,7 @@ Install the pre-commit hooks:
 pre-commit install
 ```
 This configuration ensures that only files in ./terraform are checked for formatting and validated.
+[The pre commit terraform repository](https://github.com/antonbabenko/pre-commit-terraform)
 
 3. Integrating terraform fmt and terraform validate in GitHub Actions
 To add these checks to a GitHub Actions workflow, specify the directory containing Terraform files. This setup validates formatting and configuration for every push and pull request:
