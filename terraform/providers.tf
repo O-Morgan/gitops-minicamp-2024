@@ -16,8 +16,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Service     = "GitOps Minicamp 2024"  # Indicates the name of this project or application
-      Environment = "Dev" # Indicates the deployment environment (e.g., Development) Infracost only recognises Dev, Stage or Prod shorthand
+      Service     = "GitOps Minicamp 2024" # Indicates the name of this project or application
+      Environment = "Dev"                  # Indicates the deployment environment (e.g., Development) Infracost only recognises Dev, Stage or Prod shorthand
     }
   }
 }

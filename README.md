@@ -65,28 +65,28 @@ Customisable Pipelines: Jenkins uses "pipelines" defined in Jenkinsfiles, while 
 Community Plugins/Marketplace: Jenkins has an extensive library of plugins to extend functionality, while GitHub Actions has a marketplace full of reusable actions shared by the community.
 
 **Key Differences:**
-1. **Hosting and Setup:**
+1.**Hosting and Setup:**
 GitHub Actions is tightly integrated into GitHub, making it easy to use for repositories hosted on GitHub. It's cloud-based, so there's no need for infrastructure management.
 Jenkins is typically self-hosted, requiring you to manage the infrastructure, updates, and security. It can be more complex to set up and maintain but offers greater flexibility for custom environments.
 
-2. **Ease of Use:** GitHub Actions is known for its simplicity, especially for projects already on GitHub. It's easier for beginners and integrates seamlessly with GitHub repositories. Jenkins offers more complex configurations and flexibility for large-scale enterprise environments, but the learning curve can be steeper.
+2.**Ease of Use:** GitHub Actions is known for its simplicity, especially for projects already on GitHub. It's easier for beginners and integrates seamlessly with GitHub repositories. Jenkins offers more complex configurations and flexibility for large-scale enterprise environments, but the learning curve can be steeper.
 
-3. **Ecosystem Integration:** GitHub Actions is directly integrated with the GitHub ecosystem, which simplifies workflows like version control, collaboration, and issue tracking. Jenkins can integrate with many different tools and services, making it more versatile for projects hosted outside of GitHub.
+3.**Ecosystem Integration:** GitHub Actions is directly integrated with the GitHub ecosystem, which simplifies workflows like version control, collaboration, and issue tracking. Jenkins can integrate with many different tools and services, making it more versatile for projects hosted outside of GitHub.
 
-4. **Scalability and Customization:** Jenkins is highly customisable and scalable, suitable for more complex or enterprise-grade CI/CD pipelines that need fine control over the environment. GitHub Actions is scalable for most use cases, but it may not offer the same degree of flexibility for complex, multi-platform environments as Jenkins.
+4.**Scalability and Customization:** Jenkins is highly customisable and scalable, suitable for more complex or enterprise-grade CI/CD pipelines that need fine control over the environment. GitHub Actions is scalable for most use cases, but it may not offer the same degree of flexibility for complex, multi-platform environments as Jenkins.
 
 **Conclusion:** You can say GitHub Actions is similar to Jenkins in its purpose (CI/CD automation), but GitHub Actions is more streamlined and integrated into GitHub, whereas Jenkins offers more control and flexibility, especially in self-hosted environments. Depending on the complexity of your project and infrastructure needs, one might be more suitable than the other.
 
 ## GitHub Actions Documentation:
-1. **Official GitHub Actions Documentation:**
+1.**Official GitHub Actions Documentation:**
 GitHub provides thorough documentation on how to set up, configure, and use GitHub Actions. It covers topics from basic workflows to more advanced use cases.
 [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
-2. **GitHub Marketplace for Actions:**
+2.**GitHub Marketplace for Actions:**
 You can explore pre-built actions to use in your workflows from the GitHub Marketplace. This can help save time and effort by using community-contributed actions.
 [GitHub Actions Marketplace](https://github.com/marketplace?type=actions)
 
-3. **GitHub Learning Lab:**
+3.**GitHub Learning Lab:**
 GitHub also offers interactive tutorials on how to use GitHub Actions, allowing you to learn through hands-on examples.
 [GitHub Learning Lab - GitHub Actions](https://lab.github.com/githubtraining/github-actions:-hello-world)
 
