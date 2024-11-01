@@ -25,6 +25,10 @@ More Than Certified GitOps Mini Camp
 - [Grafana Health Checks and Workaround](#grafana-health-checks-and-workaround)
 - [Further Reading](#further-reading)
 
+<p align="center">
+  <img src="images/GitOps%20Architecture%20.png" alt="GitOps Project Architecture">
+</p>
+
 # Introduction
 I am utilising GitHub Actions to automate the deployment of features into my AWS environment. By leveraging continuous integration and deployment (CI/CD) pipelines, I ensure that my code is tested, built, and deployed efficiently and consistently. Additionally, I implement semantic versioning to manage and track software changes, allowing for clear version updates that follow a predictable and standardised format. This approach ensures that each new feature, bug fix, or breaking change is systematically reflected in the versioning. This automation and versioning strategy simplifies my development process, allowing me to focus on delivering high-quality features with minimal manual intervention whilst maintaining full control over the release cycle.
 
@@ -445,12 +449,58 @@ Run OPA Evaluation: In your GitHub Actions workflow, use the opa eval command to
     [ "$opaout" = "null" ] && exit 0 || echo "$opaout" && gh pr comment --body "### $opaout" --
 ```
 
-## Grafana Health Checks and Workaround
+## Grafana Overview
+
+Grafana is an open-source analytics and interactive visualization tool. It allows users to query, visualise, alert, and understand their metrics from various data sources, such as Prometheus, InfluxDB, MySQL, and AWS CloudWatch. Grafana's dynamic dashboards are especially useful for monitoring infrastructure and application performance over time, making it widely used in DevOps, data analysis, and system monitoring.
+
+Initial Setup and Bootstrap for EC2
+To deploy Grafana on an EC2 instance, you can use the following bootstrap script to set up Grafana on Amazon Linux 2 or a compatible Ubuntu distribution:
+
+```bash
+#!/bin/bash
+# Update package lists and install dependencies
+sudo apt-get update
+sudo apt-get install -y software-properties-common
+
+# Add Grafana’s official repository and install Grafana
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+sudo apt-get update
+sudo apt-get install -y grafana
+
+# Start and enable Grafana service
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+```
+
+This script performs the following:
+
+Updates the package lists.
+Adds Grafana's official repository to ensure you receive the latest stable version.
+Installs Grafana, then starts and enables the Grafana server, so it starts automatically after a reboot.
+Accessing Grafana
+After the installation, Grafana will be accessible on port 3000. To access it, use one of the following options:
+
+Locally: If you have SSH port forwarding enabled, access Grafana from your browser at localhost:3000.
+Public IP: To access Grafana remotely, navigate to http://<public-IP>:3000, where <public-IP> is the public IP address of your EC2 instance.
+
+Default Login Credentials
+On first access, Grafana requires authentication:
+-Username: admin
+-Password: admin (Grafana will prompt you to set a new password on initial login for enhanced security).
+
+Best Practices for Grafana Access and Security
+Limit Public Access: To avoid exposing Grafana directly to the internet, consider using an SSH tunnel or restricting access via a VPN or private network.
+Use Strong Authentication: Integrate Grafana with your organization's identity provider, if available, to enforce multi-factor authentication and streamline user management.
+Enable HTTPS: Configure Grafana to serve over HTTPS to secure data transmission.
+Regular Updates: Keep Grafana updated to benefit from the latest security patches and features.
+
+### Grafana Health Checks and Workaround
 Grafana can be accessed on port 3000, typically with the default login admin / admin. I encountered issues when using the API health endpoint, as it doesn’t always return a 200 OK. Instead, the following health check confirms accessibility:
 
 Health Check Provisioner:
 
-bash
+```bash
 Copy code
 provisioner "local-exec" {
   command = <<EOT
@@ -470,6 +520,7 @@ provisioner "local-exec" {
     '
   EOT
 }
+```
 
 **Further Reading**
 
