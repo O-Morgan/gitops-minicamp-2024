@@ -46,8 +46,8 @@ resource "aws_route_table" "gitops_rt" {
   }
 }
 resource "aws_subnet" "gitops_subnet" {
-  vpc_id                  = aws_vpc.gitops_vpc.id
-  cidr_block              = "10.0.1.0/24"
+  vpc_id     = aws_vpc.gitops_vpc.id
+  cidr_block = "10.0.1.0/24"
 
   # tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
@@ -66,19 +66,19 @@ resource "aws_security_group" "gitops_sg" {
   description = "Allow port 3000"
   vpc_id      = aws_vpc.gitops_vpc.id
 
-ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
+  ingress {
+    from_port = 3000
+    to_port   = 3000
+    protocol  = "tcp"
     # tfsec:ignore:aws-ec2-no-public-ingress-sgr
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow access to Grafana on port 3000"
   }
 
-   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
     # tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all outbound traffic"
@@ -98,11 +98,11 @@ resource "aws_instance" "grafana_server" {
 
   root_block_device {
     volume_type = "gp3"
-    encrypted = true
+    encrypted   = true
   }
 
   metadata_options {
-    http_tokens = "required"   # Enforce IMDSv2
+    http_tokens = "required" # Enforce IMDSv2
   }
 
   tags = {
@@ -110,8 +110,8 @@ resource "aws_instance" "grafana_server" {
   }
 
   # Health check provisioner
-provisioner "local-exec" {
-  command = <<EOT
+  provisioner "local-exec" {
+    command = <<EOT
     bash -c '
       for ((i=1; i<=20; i++)); do
         response=$(curl -s -o /dev/null -w "%%{http_code}" http://${self.public_ip}:3000/api/health)
