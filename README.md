@@ -592,9 +592,10 @@ Enable HTTPS: Configure Grafana to serve over HTTPS to secure data transmission.
 Regular Updates: Keep Grafana updated to benefit from the latest security patches and features.
 
 ### Grafana Health Checks and Workaround
-Grafana can be accessed on port 3000, typically with the default login admin / admin. I encountered issues when using the API health endpoint, as it doesn’t always return a 200 OK. Instead, the following health check confirms accessibility:
+Grafana can be accessed on port 3000, typically with the default login admin / admin. While configuring the health check, I noticed the /api/health endpoint occasionally failed to return a 200 OK status consistently. To ensure reliable validation of Grafana's availability, I implemented a custom health check provisioner within the Terraform configuration.
 
 Health Check Provisioner:
+The following provisioner script in Terraform performs up to 20 attempts to verify Grafana’s accessibility on port 3000 by querying the /api/health endpoint. This loop introduces a 20-second delay between each attempt to allow sufficient startup time for Grafana.
 
 ```bash
 Copy code
@@ -617,6 +618,12 @@ provisioner "local-exec" {
   EOT
 }
 ```
+Explanation
+- Loop: The script checks the /api/health endpoint on port 3000 for a 200 OK response.
+- Retry Logic: It retries up to 20 times, with a 20-second pause between attempts.
+- Exit Strategy: If Grafana responds with a 200 OK status within the limit, the script outputs a success message and exits. Otherwise, it logs a failure message after 20 attempts and exits with a non-zero status, signaling the failure.
+
+This health check ensures Grafana is fully accessible before continuing with any dependent tasks. This workaround is robust for initial deployments and ensures a reliable validation for Grafana's availability.
 
 **Further Reading**
 
@@ -627,3 +634,8 @@ provisioner "local-exec" {
 - [Open Policy Agent Documentation](https://www.openpolicyagent.org/docs/latest/policy-language/) - OPA policy language reference.
 - [Rego Playground](https://play.openpolicyagent.org/) - Try out Rego policies in an interactive playground.
 - [Jenkins Documentation](https://www.jenkins.io/doc/) - Official Jenkins documentation.
+- [AWS Configure Credentials GitHub Action](https://github.com/aws-actions/configure-aws-credentials/releases) - Set up AWS credentials for GitHub Actions.
+- [HashiCorp Terraform Setup Action](https://github.com/hashicorp/setup-terraform) - GitHub Action for setting up Terraform by HashiCorp.
+- [GitHub Checkout Action](https://github.com/actions/checkout) - Action for checking out repository code in GitHub Actions workflows.
+- [Open Policy Agent Setup Action](https://github.com/open-policy-agent/setup-opa) - Action to set up OPA (Open Policy Agent) in workflows.
+- [TFLint GitHub Action](https://github.com/terraform-linters/tflint/releases) - GitHub Action to integrate TFLint, a linter for Terraform.
